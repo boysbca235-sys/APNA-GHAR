@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Room Rental Platform</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+  }
+  h1, h2 {
+    text-align: center;
+  }
+  form {
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 6px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  input, select {
+    padding: 8px;
+    margin: 6px 0 12px 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  button:hover {
+    background-color: #0056b3;
+  }
+  .room-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .room-card img {
+    max-width: 100%;
+    border-radius: 6px;
+  }
+  .no-results {
+    text-align: center;
+    font-style: italic;
+    color: #888;
+  }
+</style>
+</head>
+<body>
+
+<h1>Room Rental Platform</h1>
+
+<h2>Add Your Room (Owner)</h2>
+<form id="roomForm">
+  <label>City:</label>
+  <input type="text" id="cityInput" placeholder="Enter city" required />
+  
+  <label>Area:</label>
+  <input type="text" id="areaInput" placeholder="Enter area/locality" required />
+  
+  <label>Rent (INR):</label>
+  <input type="number" id="rentInput" placeholder="Enter rent amount" required />
+  
+  <label>Room Type:</label>
+  <select id="roomTypeInput" required>
+    <option value="">Select room type</option>
+    <option value="1RK">1RK</option>
+    <option value="1BHK">1BHK</option>
+    <option value="2BHK">2BHK</option>
+  </select>
+  
+  <label>Image URL:</label>
+  <input type="url" id="imageInput" placeholder="Enter image URL of the room" />
+  
+  <button type="submit">Add Room</button>
+</form>
+
+<hr />
+
+<h2>Search Rooms</h2>
+<form id="searchForm">
+  <label>City:</label>
+  <input type="text" id="searchCity" placeholder="Enter city to search" required />
+  <button type="submit">Search</button>
+</form>
+
+<div id="results"></div>
+
+<script>
+  const rooms = [];
+
+  const roomForm = document.getElementById('roomForm');
+  const searchForm = document.getElementById('searchForm');
+  const resultsDiv = document.getElementById('results');
+
+  // Add room on submit
+  roomForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    const city = document.getElementById('cityInput').value.trim().toLowerCase();
+    const area = document.getElementById('areaInput').value.trim();
+    const rent = parseInt(document.getElementById('rentInput').value);
+    const roomType = document.getElementById('roomTypeInput').value;
+    const image = document.getElementById('imageInput').value.trim() || 'https://via.placeholder.com/400x250?text=Room+Image';
+
+    if(!city || !area || !rent || !roomType) {
+      alert('Please fill all required fields');
+      return;
+    }
+
+    rooms.push({ city, area, rent, roomType, image });
+    alert('Room added successfully!');
+    roomForm.reset();
+  });
+
+  // Search rooms on submit
+  searchForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    const searchCity = document.getElementById('searchCity').value.trim().toLowerCase();
+
+    if(!searchCity) {
+      alert('Please enter city to search');
+      return;
+    }
+
+    const filteredRooms = rooms.filter(room => room.city === searchCity);
+
+    displayResults(filteredRooms);
+  });
+
+  function displayResults(filteredRooms) {
+    resultsDiv.innerHTML = '';
+
+    if(filteredRooms.length === 0) {
+      resultsDiv.innerHTML = '<p class="no-results">No rooms found for this city.</p>';
+      return;
+    }
+
+    filteredRooms.forEach(room => {
+      const roomCard = document.createElement('div');
+      roomCard.className = 'room-card';
+
+      roomCard.innerHTML = `
+        <img src="${room.image}" alt="Room Image" />
+        <h3>${room.roomType} in ${capitalize(room.area)}</h3>
+        <p><strong>City:</strong> ${capitalize(room.city)}</p>
+        <p><strong>Rent:</strong> ₹${room.rent}</p>
+        <button onclick="alert('Booking functionality coming soon!')">Book Now</button>
+      `;
+
+      resultsDiv.appendChild(roomCard);
+    });
+  }
+
+  function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+</script>
+
+</body>
+</html>
